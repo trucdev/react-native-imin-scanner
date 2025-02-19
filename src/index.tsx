@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
 
 const LINKING_ERROR =
   `The package 'react-native-imin-scanner' doesn't seem to be linked. Make sure: \n\n` +
@@ -17,6 +17,20 @@ const IminScanner = NativeModules.IminScanner
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return IminScanner.multiply(a, b);
+export function registerScannerReceiver() {
+  return IminScanner.registerScannerReceiver();
+}
+export function unregisterScannerReceiver() {
+  return IminScanner.unregisterScannerReceiver();
+}
+
+interface BarcodeScannedCallback {
+  (barcode: string): void;
+}
+
+export function onBarcodeScanned(callback: BarcodeScannedCallback) {
+  return DeviceEventEmitter.addListener(
+    'IMIN_SCANNER_barcode_scanned',
+    callback
+  );
 }
